@@ -3,6 +3,7 @@ package com.example.javafxjdbc;
 import com.example.javafxjdbc.db.DbIntegrityException;
 import com.example.javafxjdbc.listeners.DataChangeListener;
 import com.example.javafxjdbc.model.entities.Seller;
+import com.example.javafxjdbc.model.services.DepartmentService;
 import com.example.javafxjdbc.model.services.SellerService;
 import com.example.javafxjdbc.model.util.Alerts;
 import com.example.javafxjdbc.model.util.Utils;
@@ -107,7 +108,8 @@ public class SellerListController implements Initializable, DataChangeListener {
 
             SellerFormController controller = fxmlLoader.getController();
             controller.setSeller(obj);
-            controller.setSellerService(new SellerService());
+            controller.setServices(new SellerService(), new DepartmentService());
+            controller.loadAssociatedObjects();
             controller.subscribeDataChangeListener(this);
             controller.updateFormData();
 
@@ -119,6 +121,7 @@ public class SellerListController implements Initializable, DataChangeListener {
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.showAndWait();
         } catch (IOException e){
+            e.printStackTrace();
             Alerts.showAlert("IO Exception", "Error Loading View", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
