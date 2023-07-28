@@ -1,6 +1,7 @@
 package com.example.javafxjdbc;
 
 import com.example.javafxjdbc.model.services.DepartmentService;
+import com.example.javafxjdbc.model.services.SellerService;
 import com.example.javafxjdbc.model.util.Alerts;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +31,10 @@ public class MainController implements Initializable {
 
     @FXML
     private void onMenuItemSellerAction() {
-        System.out.println("onMenuItemSellerAction");
+        loadView("SellerList.fxml", (SellerListController controller) -> {
+            controller.setSellerService(new SellerService());
+            controller.updateTableView();
+        });
     }
 
     @FXML
