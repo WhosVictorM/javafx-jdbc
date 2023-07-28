@@ -1,5 +1,6 @@
 package com.example.javafxjdbc;
 
+import com.example.javafxjdbc.model.entities.Department;
 import com.example.javafxjdbc.model.util.Constraints;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,7 +11,9 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class DepartmentForm implements Initializable {
+public class DepartmentFormController implements Initializable {
+
+    private Department entity;
 
     @FXML
     private TextField textFieldId;
@@ -27,12 +30,17 @@ public class DepartmentForm implements Initializable {
     @FXML
     private Label labelError;
 
+    public void setDepartment(Department entity) {
+        this.entity = entity;
+    }
+
     @FXML
-    private void onButtonSaveAction(){
+    private void onButtonSaveAction() {
         System.out.println("onButtonSaveAction");
     }
+
     @FXML
-    private void onButtonCancelAction(){
+    private void onButtonCancelAction() {
         System.out.println("onButtonCancelAction");
     }
 
@@ -41,8 +49,17 @@ public class DepartmentForm implements Initializable {
         initializeNodes();
     }
 
-    private void initializeNodes(){
+    private void initializeNodes() {
         Constraints.setTextFieldInteger(textFieldId);
-        Constraints.setTextFieldMaxLength(textFieldName,30);
+        Constraints.setTextFieldMaxLength(textFieldName, 30);
     }
+
+    public void updateFormData(){
+        if (entity == null){
+            throw new IllegalStateException("Entity was null");
+        }
+        textFieldId.setText(String.valueOf(entity.getId()));
+        textFieldName.setText(entity.getName());
+    }
+
 }
