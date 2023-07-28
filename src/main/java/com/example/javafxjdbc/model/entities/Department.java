@@ -1,4 +1,6 @@
-package com.example.javafxjdbc.entities;
+package com.example.javafxjdbc.model.entities;
+
+import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
