@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class MainController implements Initializable {
 
@@ -34,19 +35,22 @@ public class MainController implements Initializable {
 
     @FXML
     private void onMenuItemDepartmentAction() {
-        loadView2("DepartmentList.fxml");
+        loadView("DepartmentList.fxml", (DepartmentListController controller) -> {
+            controller.setDepartmentService(new DepartmentService());
+            controller.updateTableView();
+        });
     }
 
     @FXML
     private void onMenuItemAboutAction() {
-        loadView("About.fxml");
+        loadView("About.fxml", x -> {});
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
 
-    private synchronized void loadView(String absoluteName){
+    private synchronized <T> void loadView(String absoluteName, Consumer<T> initialazingAction){
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(absoluteName));
             VBox newVBox = fxmlLoader.load();
@@ -59,31 +63,12 @@ public class MainController implements Initializable {
             mainVBox.getChildren().add(mainMenu);
             mainVBox.getChildren().addAll(newVBox.getChildren());
 
+            T controller = fxmlLoader.getController();
+            initialazingAction.accept(controller);
 
         } catch (IOException e){
             Alerts.showAlert("IO Exception", "Error Loading View", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
-    private synchronized void loadView2 (String absoluteName){
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(absoluteName));
-            VBox newVBox = fxmlLoader.load();
-
-            Scene scene = MainApplication.getScene();
-            VBox mainVBox = ((VBox) ((ScrollPane) scene.getRoot()).getContent());
-
-            Node mainMenu = mainVBox.getChildren().get(0);
-            mainVBox.getChildren().clear();
-            mainVBox.getChildren().add(mainMenu);
-            mainVBox.getChildren().addAll(newVBox.getChildren());
-
-            DepartmentListController controller = fxmlLoader.getController();
-            controller.setDepartmentService(new DepartmentService());
-            controller.updateTableView();
-
-        } catch (IOException e){
-            Alerts.showAlert("IO Exception", "Error Loading View", e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
 }
