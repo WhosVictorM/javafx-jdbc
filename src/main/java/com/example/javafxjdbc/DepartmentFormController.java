@@ -1,6 +1,7 @@
 package com.example.javafxjdbc;
 
 import com.example.javafxjdbc.db.DbException;
+import com.example.javafxjdbc.listeners.DataChangeListener;
 import com.example.javafxjdbc.model.entities.Department;
 import com.example.javafxjdbc.model.services.DepartmentService;
 import com.example.javafxjdbc.model.util.Alerts;
@@ -15,7 +16,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class DepartmentFormController implements Initializable {
@@ -23,6 +25,8 @@ public class DepartmentFormController implements Initializable {
     private Department entity;
 
     private DepartmentService service;
+
+    private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
     @FXML
     private TextField textFieldId;
@@ -47,6 +51,10 @@ public class DepartmentFormController implements Initializable {
         this.service = service;
     }
 
+    public void subscribeDataChangeListener (DataChangeListener listener){
+        dataChangeListeners.add(listener);
+    }
+
     @FXML
     private void onButtonSaveAction(ActionEvent event) {
         if (entity == null){
@@ -58,9 +66,16 @@ public class DepartmentFormController implements Initializable {
         try {
             entity = getFormData();
             service.saveOrUpdate(entity);
+            notifyDataChangeListeners();
             Utils.currentStage(event).close();
         } catch (DbException e){
             Alerts.showAlert("Error saving object", null, e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void notifyDataChangeListeners() {
+        for (DataChangeListener listener : dataChangeListeners) {
+            listener.onDataChanged();
         }
     }
 
